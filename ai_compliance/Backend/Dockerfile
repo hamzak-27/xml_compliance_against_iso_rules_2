@@ -19,6 +19,11 @@ EXPOSE 5000
 # Set environment variables
 ENV FLASK_ENV=production
 ENV PYTHONUNBUFFERED=1
+ENV PORT=5000
 
-# Run the Flask application
-CMD ["python", "main.py"]
+# Create non-root user for security
+RUN adduser --disabled-password --gecos '' --shell /bin/bash user && chown -R user:user /app
+USER user
+
+# Run the Flask application with Gunicorn for production
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--timeout", "120", "main:app"]
