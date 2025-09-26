@@ -10,8 +10,18 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
+# Copy backend code
 COPY . .
+
+# Build frontend
+WORKDIR /app/../Frontend
+COPY ../Frontend/package*.json ./
+RUN npm ci
+COPY ../Frontend/ ./
+RUN npm run build
+
+# Go back to backend directory
+WORKDIR /app
 
 # Expose the port that Flask runs on
 EXPOSE 5000

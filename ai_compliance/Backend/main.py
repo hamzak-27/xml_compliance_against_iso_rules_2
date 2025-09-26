@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
 import uuid
 import json
@@ -154,13 +154,21 @@ def health_check():
             'error': str(e)
         }), 503
 
-@app.route('/', methods=['GET'])
-def root():
-    return jsonify({
-        'message': 'XML Compliance Checker API',
-        'health': '/api/health',
-        'upload': '/api/upload'
-    })
+# Serve frontend static files
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('../Frontend/dist', filename)
+
+@app.route('/')
+def serve_frontend():
+    return send_from_directory('../Frontend/dist', 'index.html')
+
+@app.route('/<path:path>')
+def serve_spa_routes(path):
+    # For SPA routing, serve index.html for any non-API route
+    if path.startswith('api/'):
+        return jsonify({'error': 'API route not found'}), 404
+    return send_from_directory('../Frontend/dist', 'index.html')
 
 # Initialize on startup (for both direct run and WSGI)
 api_key = os.environ.get('OPENAI_API_KEY')
