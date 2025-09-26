@@ -154,19 +154,18 @@ def health_check():
             'error': str(e)
         }), 503
 
+# Initialize on startup (for both direct run and WSGI)
+api_key = os.environ.get('OPENAI_API_KEY')
+if not api_key:
+    print("⚠️ WARNING: OPENAI_API_KEY environment variable is not set!")
+    print("🚨 The application will not work properly without this API key.")
+else:
+    print("✓ OpenAI API key configured")
+
+print("📊 XML Compliance Checker Backend Ready")
+
 if __name__ == '__main__':
-    print("🔥 Optimized Async Compliance Checker Backend Started")
-    
-    # Validate required environment variables
-    api_key = os.environ.get('OPENAI_API_KEY')
-    if not api_key:
-        print("⚠️ WARNING: OPENAI_API_KEY environment variable is not set!")
-        print("🚨 The application will not work properly without this API key.")
-    else:
-        print("✓ OpenAI API key configured")
-    
-    print("📊 Ready to process XML files for ISO compliance")
-    
+    print("🔥 Running in development mode")
     # Get port from environment variable or default to 5000
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_ENV') != 'production'

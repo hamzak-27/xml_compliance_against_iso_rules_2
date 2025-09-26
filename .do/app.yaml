@@ -5,7 +5,6 @@ services:
   github:
     repo: your-github-username/xml_compliance_against_iso_rules_2
     branch: main
-  run_command: gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 main:app
   environment_slug: python
   instance_count: 1
   instance_size_slug: basic-xxs
