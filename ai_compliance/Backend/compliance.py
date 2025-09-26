@@ -8,13 +8,23 @@ from tasks_progress import update_task_progress, finish_task, fail_task
 
 load_dotenv()
 
-# --- OpenAI setup ---
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# --- OpenAI setup (lazy initialization) ---
+client = None
+
+def get_openai_client():
+    global client
+    if client is None:
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY environment variable is not set")
+        client = OpenAI(api_key=api_key)
+    return client
 
 # --- AI call helper ---
 async def ai_json_call(messages, model="gpt-4o-mini"):
     def blocking_call():
-        return client.chat.completions.create(
+        openai_client = get_openai_client()
+        return openai_client.chat.completions.create(
             model=model,
             messages=messages,
             response_format={"type": "json_object"}
