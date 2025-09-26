@@ -157,18 +157,32 @@ def health_check():
 # Serve frontend static files
 @app.route('/static/<path:filename>')
 def serve_static(filename):
-    return send_from_directory('../Frontend/dist', filename)
+    try:
+        return send_from_directory('Frontend/dist', filename)
+    except:
+        return jsonify({'error': 'Frontend not built'}), 404
 
 @app.route('/')
 def serve_frontend():
-    return send_from_directory('../Frontend/dist', 'index.html')
+    try:
+        return send_from_directory('Frontend/dist', 'index.html')
+    except:
+        return jsonify({
+            'message': 'XML Compliance Checker API',
+            'health': '/api/health',
+            'upload': '/api/upload',
+            'note': 'Frontend not available - use API endpoints directly'
+        })
 
 @app.route('/<path:path>')
 def serve_spa_routes(path):
     # For SPA routing, serve index.html for any non-API route
     if path.startswith('api/'):
         return jsonify({'error': 'API route not found'}), 404
-    return send_from_directory('../Frontend/dist', 'index.html')
+    try:
+        return send_from_directory('Frontend/dist', 'index.html')
+    except:
+        return jsonify({'error': 'Frontend not available'}), 404
 
 # Initialize on startup (for both direct run and WSGI)
 api_key = os.environ.get('OPENAI_API_KEY')

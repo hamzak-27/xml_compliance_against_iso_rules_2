@@ -1,4 +1,14 @@
-# Use Python 3.11 slim image for smaller size
+# Multi-stage build
+FROM node:18-alpine as frontend-build
+
+# Build frontend
+WORKDIR /frontend
+COPY ../Frontend/package*.json ./
+RUN npm ci
+COPY ../Frontend/ ./
+RUN npm run build
+
+# Python backend stage
 FROM python:3.11-slim
 
 # Set working directory
@@ -13,15 +23,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy backend code
 COPY . .
 
-# Build frontend
-WORKDIR /app/../Frontend
-COPY ../Frontend/package*.json ./
-RUN npm ci
-COPY ../Frontend/ ./
-RUN npm run build
-
-# Go back to backend directory
-WORKDIR /app
+# Copy built frontend from previous stage
+COPY --from=frontend-build /frontend/dist ./Frontend/dist
 
 # Expose the port that Flask runs on
 EXPOSE 5000
