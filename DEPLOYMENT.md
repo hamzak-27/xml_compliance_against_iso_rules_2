@@ -160,6 +160,10 @@ For high-traffic scenarios, consider:
 4. **Build Failures**: Dependencies or build issues
    - Check Docker build logs: `sudo docker-compose logs`
    - Ensure all files are committed to repository
+   
+5. **OpenAI Dependency Error**: `TypeError: Client.__init__() got an unexpected keyword argument 'proxies'`
+   - This is fixed with pinned dependency versions in requirements.txt
+   - If still occurring, redeploy with the updated requirements.txt
 
 ## Support
 

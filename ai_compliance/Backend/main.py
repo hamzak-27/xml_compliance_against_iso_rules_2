@@ -132,10 +132,39 @@ def get_results(task_id):
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    return jsonify({'status': 'healthy', 'service': 'xml-compliance-checker'})
+    try:
+        # Check if OpenAI API key is configured
+        api_key = os.environ.get('OPENAI_API_KEY')
+        if not api_key:
+            return jsonify({
+                'status': 'unhealthy', 
+                'service': 'xml-compliance-checker',
+                'error': 'OPENAI_API_KEY not configured'
+            }), 503
+            
+        return jsonify({
+            'status': 'healthy', 
+            'service': 'xml-compliance-checker',
+            'openai_configured': True
+        })
+    except Exception as e:
+        return jsonify({
+            'status': 'unhealthy', 
+            'service': 'xml-compliance-checker',
+            'error': str(e)
+        }), 503
 
 if __name__ == '__main__':
     print("🔥 Optimized Async Compliance Checker Backend Started")
+    
+    # Validate required environment variables
+    api_key = os.environ.get('OPENAI_API_KEY')
+    if not api_key:
+        print("⚠️ WARNING: OPENAI_API_KEY environment variable is not set!")
+        print("🚨 The application will not work properly without this API key.")
+    else:
+        print("✓ OpenAI API key configured")
+    
     print("📊 Ready to process XML files for ISO compliance")
     
     # Get port from environment variable or default to 5000
