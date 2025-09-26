@@ -1,0 +1,8 @@
+flask==2.3.3
+flask-cors==4.0.0
+python-dotenv==1.0.0
+openai==1.35.0
+lxml==4.9.3
+requests==2.31.0
+pathlib2==2.3.7
+gunicorn==21.2.0
