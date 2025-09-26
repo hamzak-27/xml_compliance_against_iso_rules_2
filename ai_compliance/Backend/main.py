@@ -154,6 +154,14 @@ def health_check():
             'error': str(e)
         }), 503
 
+@app.route('/', methods=['GET'])
+def root():
+    return jsonify({
+        'message': 'XML Compliance Checker API',
+        'health': '/api/health',
+        'upload': '/api/upload'
+    })
+
 # Initialize on startup (for both direct run and WSGI)
 api_key = os.environ.get('OPENAI_API_KEY')
 if not api_key:
